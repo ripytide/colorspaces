@@ -3,11 +3,18 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-mod color;
-mod matrix;
-mod traits;
+mod colorspace;
+mod decorerinfo;
 
-mod impls;
+pub use colorspace::ColorSpace;
 
+pub struct Image<P> {
+    pixels: Vec<P>,
+    metadata: Metadata,
+}
 
-type Image<P> = Vec<P>;
+pub struct Metadata {
+    colorspace: Option<ColorSpace>,
+    original_file_size: u32,
+    decoder_info: DecoderInfo,
+}
