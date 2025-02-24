@@ -3,74 +3,54 @@
 use rgb::RgbColorSpace;
 use yuv::YuvColorSpace;
 
-pub mod transfer;
 pub mod yuv;
 pub mod rgb;
 
 /// Identifies a color representation.
 ///
-/// This names the model by which the numbers in the channels relate to a physical model. How
-/// exactly depends on the variant as presented below. Some of them can be customized further with
-/// parameters.
+/// This names the model by which the numbers in the pixel channels relate to a physical color the
+/// pixel represents.
 ///
-/// Notably, there are _NOT_ the numbers which we will use in image operations. Generally, we will
-/// use an associated _linear_ representation of those colors instead. The choice here depends on
-/// the color and is documented for each variants. It is chosen to provide models for faithful
-/// linear operations on these colors such as mixing etc.
-///
-/// TODO: colors describe _paths_ to linear display, so we should somehow implement direction
-/// conversions such as "BT.2087 : Colour conversion from Recommendation ITU-R BT.709 to
-/// Recommendation ITU-R BT.2020" in a separate manner.
+/// <https://en.wikipedia.org/wiki/Color_space>
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ColorSpace {
+    /// Red Green Blue color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/RGB_color_spaces>
     Rgb(RgbColorSpace),
+    /// YUV color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/Y%E2%80%B2UV>
     Yuv(YuvColorSpace),
-    /// The simple but perceptual space Oklab by Björn Ottoson.
+    /// CIE 1931 XYZ color space.
     ///
-    /// The _linear_ representation of this color is Lab but its quantized components are may be
-    /// either Lab or LCh.
+    /// <https://en.wikipedia.org/wiki/CIE_1931_color_space>
+    Xyz(XyzColorSpace),
+    /// CIE 1964 UVW color space.
     ///
-    /// It's based on a combination of two linear transforms and one non-linear power-function
-    /// between them. Coefficients of these transforms are based on optimization against matching
-    /// pairs in the detailed CAM16 model, trying to predict the parameters in those pairs as
-    /// precisely as possible. For details see [the post's derivation][derivation].
+    /// <https://en.wikipedia.org/wiki/CIE_1964_color_space>
+    Uvw(UvwColorSpace),
+    /// CIE 1976 LUV color space.
     ///
-    /// Reference: <https://bottosson.github.io/posts/oklab/>
+    /// <https://en.wikipedia.org/wiki/CIELUV>
+    Luv(LuvColorSpace),
+    /// CIE 1976 LAB color space.
     ///
-    /// [derivation]: https://bottosson.github.io/posts/oklab/#how-oklab-was-derived
-    Oklab,
-    /// A group of scalar values, with no assigned relation to physical quantities.
+    /// <https://en.wikipedia.org/wiki/CIELAB_color_space>
+    Lab(LabColorSpace),
+    /// Hue Saturation Lightness color space.
     ///
-    /// The purpose of this color is to simplify the process of creating color ramps and sampling
-    /// functions, which do not have any interpretation themselves but are just coefficients to be
-    /// used somewhere else.
+    /// <https://en.wikipedia.org/wiki/HSL_and_HSV>
+    Hsl(HslColorSpace),
+    /// HSLuv color space.
     ///
-    /// The only `SampleParts` that are allowed to be paired with this are `XYZ`.
+    /// <https://en.wikipedia.org/wiki/HSLuv>
+    Hsluv(HsluvColorSpace),
+    /// Oklab color space.
     ///
-    /// Additionally, you might use the images created with this color as an input or an
-    /// intermediate step of a `transmute` to create images with chosen values in the linear
-    /// representation without the need to manually calculate their texel encoding.
-    Scalars {
-        /// The transfer to use for points, as if they are RGB-ish colors.
-        /// You can simply use `Linear` if you do not want to encode and rgb texel.
-        transfer: Transfer,
-    },
-    /// A LAB space based on contemporary perceptual understanding.
-    ///
-    /// > The newly defined SRLAB2 color model is a compromise between the simplicity of CIELAB and
-    /// > the correctness of CIECAM02.
-    ///
-    /// By combining whitepoint adaption in the (more) precise model of CIECAM02 while performing
-    /// the transfer function in the cone response space, this achieves a good uniformity by
-    /// simply modelling the human perception properly. It just leaves out the surround luminance
-    /// model in the vastly more complex CIECAM02.
-    ///
-    /// This is lacking for HDR. This is because its based on L*ab which is inherently optimized
-    /// for the small gamut of SDR. It's not constant luminance at exceedingly bright colors where
-    /// ICtCp might provide a better estimate (compare ΔEITP, ITU-R Rec. BT.2124).
-    ///
-    /// Reference: <https://www.magnetkern.de/srlab2.html>
+    /// <https://en.wikipedia.org/wiki/Oklab_color_space>
+    Oklab(OklabColorSpace),
     SrLab2 {
         whitepoint: Whitepoint,
     },
