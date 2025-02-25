@@ -1,28 +1,12 @@
-// types derived from https://docs.rs/image-canvas
+//! Colorspace Items
 
-use rgb::RgbColorSpace;
-use yuv::YuvColorSpace;
-
-pub mod yuv;
-pub mod rgb;
-
-/// Identifies a color representation.
-///
-/// This names the model by which the numbers in the pixel channels relate to a physical color the
-/// pixel represents.
+/// A color space.
 ///
 /// <https://en.wikipedia.org/wiki/Color_space>
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// <https://en.wikipedia.org/wiki/List_of_color_spaces_and_their_uses>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum ColorSpace {
-    /// Red Green Blue color space.
-    ///
-    /// <https://en.wikipedia.org/wiki/RGB_color_spaces>
-    Rgb(RgbColorSpace),
-    /// YUV color space.
-    ///
-    /// <https://en.wikipedia.org/wiki/Y%E2%80%B2UV>
-    Yuv(YuvColorSpace),
     /// CIE 1931 XYZ color space.
     ///
     /// <https://en.wikipedia.org/wiki/CIE_1931_color_space>
@@ -39,10 +23,6 @@ pub enum ColorSpace {
     ///
     /// <https://en.wikipedia.org/wiki/CIELAB_color_space>
     Lab(LabColorSpace),
-    /// Hue Saturation Lightness color space.
-    ///
-    /// <https://en.wikipedia.org/wiki/HSL_and_HSV>
-    Hsl(HslColorSpace),
     /// HSLuv color space.
     ///
     /// <https://en.wikipedia.org/wiki/HSLuv>
@@ -51,30 +31,90 @@ pub enum ColorSpace {
     ///
     /// <https://en.wikipedia.org/wiki/Oklab_color_space>
     Oklab(OklabColorSpace),
-    SrLab2 {
-        whitepoint: Whitepoint,
-    },
+    /// Red Green Blue color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/RGB_color_spaces>
+    Rgb(RgbColorSpace),
+    /// YUV color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/Y%E2%80%B2UV>
+    Yuv(YuvColorSpace),
+    /// CMYK color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/CMYK_color_model>
+    Cmyk(CmykColorSpace),
+    /// CMY color space.
+    ///
+    /// <https://simple.wikipedia.org/wiki/CMY_color_model>
+    Cmy(CmyColorSpace),
+    /// YCbCr color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/YCbCr>
+    Ycbcr(YcbcrColorSpace),
+    /// YPbPr color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/YPbPr>
+    Ypbpr(YpbprColorSpace),
+    /// YDbDr color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/YDbDr>
+    Ydbdr(YdbdrColorSpace),
+    /// YIQ color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/YIQ>
+    Yiq(YiqColorSpace),
+    /// xvYCC color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/XvYCC>
+    Xvycc(XvyccColorSpace),
+    /// sYCC color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/sYCC>
+    Sycc(SyccColorSpace),
+    /// Hue Saturation Value color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/HSL_and_HSV>
+    Hsv(HsvColorSpace),
+    /// Hue Saturation Lightness color space.
+    ///
+    /// <https://en.wikipedia.org/wiki/HSL_and_HSV>
+    Hsl(HslColorSpace),
 }
 
-/// The reference brightness of the color specification.
+/// A reference luminance for a color space.
 ///
-/// FIXME(color): scaling to reference luminance doesn't have an interface yet.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// <https://en.wikipedia.org/wiki/Luminance>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum Luminance {
-    /// 100cd/m².
+    /// Standard-Dynamic-Range.
+    ///
+    /// Maximum luminance: 100 cd/m²
+    ///
+    /// <https://en.wikipedia.org/wiki/Standard-dynamic-range_video>
     Sdr,
-    /// 10_000cd/m².
-    /// Known as high-dynamic range.
+    /// High-Dynamic-Range.
+    ///
+    /// Maximum luminance: 10_000 cd/m²
+    ///
+    /// <https://en.wikipedia.org/wiki/High_dynamic_range>
     Hdr,
-    /// 160cd/m².
+    /// Adobe RGB reference luminance.
+    ///
+    /// Maximum luminance: 160 cd/m²
+    ///
+    /// <https://en.wikipedia.org/wiki/Adobe_RGB_color_space>
     AdobeRgb,
-    /// 1000 nits, optimized for projector use.
+    /// DCI-P3 reference luminance.
+    ///
+    /// Maximum luminance: 1000 cd/m²
+    ///
+    /// <https://en.wikipedia.org/wiki/DCI-P3>
     DciP3,
 }
 
-/// The relative stimuli of the three corners of a triangular RGBish gamut.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// A relative stimuli of the three corners of a triangular RGBish gamut.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum Primaries {
     /// The CIE XYZ 'primaries'.
@@ -102,8 +142,10 @@ pub enum Primaries {
     Bt2100,
 }
 
-/// The differencing scheme used in a Yuv construction.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// A differencing scheme used in [`YuvColorSpace`].
+///
+/// <https://en.wikipedia.org/wiki/Y%E2%80%B2UV>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum Differencing {
     /// Rec BT.470 M/PAL differencing scheme for E_U and E_V, the naming origin for 'YUV'.
@@ -149,22 +191,10 @@ pub enum Differencing {
     YCoCg,
 }
 
-/// The whitepoint/standard illuminant.
+/// A white point.
 ///
-/// | Illuminant | X       | Y       | Z       |
-/// |------------|---------|---------|---------|
-/// | A          | 1.09850 | 1.00000 | 0.35585 |
-/// | B          | 0.99072 | 1.00000 | 0.85223 |
-/// | C          | 0.98074 | 1.00000 | 1.18232 |
-/// | D50        | 0.96422 | 1.00000 | 0.82521 |
-/// | D55        | 0.95682 | 1.00000 | 0.92149 |
-/// | D65        | 0.95047 | 1.00000 | 1.08883 |
-/// | D75        | 0.94972 | 1.00000 | 1.22638 |
-/// | E          | 1.00000 | 1.00000 | 1.00000 |
-/// | F2         | 0.99186 | 1.00000 | 0.67393 |
-/// | F7         | 0.95041 | 1.00000 | 1.08747 |
-/// | F11        | 1.00962 | 1.00000 | 0.64350 |
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// <https://en.wikipedia.org/wiki/White_point>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub enum Whitepoint {
     A,
@@ -180,13 +210,10 @@ pub enum Whitepoint {
     F11,
 }
 
-/// Transfer functions from encoded chromatic samples to physical quantity.
+/// A transfer function.
 ///
-/// Ignoring viewing environmental effects, this describes a pair of functions that are each others
-/// inverse: An electro-optical transfer (EOTF) and opto-electronic transfer function (OETF) that
-/// describes how scene lighting is encoded as an electric signal. These are applied to each
-/// stimulus value.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// <https://en.wikipedia.org/wiki/Transfer_functions_in_imaging>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u8)]
 #[non_exhaustive]
 pub enum Transfer {
@@ -223,3 +250,122 @@ pub enum Transfer {
     /// FIXME(color): not yet supported, panics on use.
     Bt2100Scene,
 }
+
+/// CIE 1931 XYZ color space.
+///
+/// <https://en.wikipedia.org/wiki/CIE_1931_color_space>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct XyzColorSpace {}
+
+/// CIE 1964 UVW color space.
+///
+/// <https://en.wikipedia.org/wiki/CIE_1964_color_space>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct UvwColorSpace {}
+
+/// CIE 1976 LUV color space.
+///
+/// <https://en.wikipedia.org/wiki/CIELUV>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct LuvColorSpace {}
+
+/// CIE 1976 LAB color space.
+///
+/// <https://en.wikipedia.org/wiki/CIELAB_color_space>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct LabColorSpace {}
+
+/// HSLuv color space.
+///
+/// <https://en.wikipedia.org/wiki/HSLuv>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct HsluvColorSpace {}
+
+/// Oklab color space.
+///
+/// <https://en.wikipedia.org/wiki/Oklab_color_space>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct OklabColorSpace {}
+
+/// Red Green Blue color space.
+///
+/// <https://en.wikipedia.org/wiki/RGB_color_spaces>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct RgbColorSpace {
+    primaries: Primaries,
+    transfer: Transfer,
+    whitepoint: Whitepoint,
+    luminance: Luminance,
+}
+
+/// YUV color space.
+///
+/// <https://en.wikipedia.org/wiki/Y%E2%80%B2UV>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct YuvColorSpace {
+    primary: Primaries,
+    whitepoint: Whitepoint,
+    transfer: Transfer,
+    luminance: Luminance,
+    differencing: Differencing,
+}
+
+/// CMYK color space.
+///
+/// <https://en.wikipedia.org/wiki/CMYK_color_model>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CmykColorSpace {}
+
+/// CMY color space.
+///
+/// <https://simple.wikipedia.org/wiki/CMY_color_model>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CmyColorSpace {}
+
+/// YCbCr color space.
+///
+/// <https://en.wikipedia.org/wiki/YCbCr>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct YcbcrColorSpace {}
+
+/// YPbPr color space.
+///
+/// <https://en.wikipedia.org/wiki/YPbPr>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct YpbprColorSpace {}
+
+/// YDbDr color space.
+///
+/// <https://en.wikipedia.org/wiki/YDbDr>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct YdbdrColorSpace {}
+
+/// YIQ color space.
+///
+/// <https://en.wikipedia.org/wiki/YIQ>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct YiqColorSpace {}
+
+/// xvYCC color space.
+///
+/// <https://en.wikipedia.org/wiki/XvYCC>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct XvyccColorSpace {}
+
+/// sYCC color space.
+///
+/// <https://en.wikipedia.org/wiki/sYCC>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct SyccColorSpace {}
+
+/// Hue Saturation Value color space.
+///
+/// <https://en.wikipedia.org/wiki/HSL_and_HSV>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct HsvColorSpace {}
+
+/// Hue Saturation Lightness color space.
+///
+/// <https://en.wikipedia.org/wiki/HSL_and_HSV>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct HslColorSpace {}

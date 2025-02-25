@@ -1,9 +1,14 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-pub mod const;
+mod preset;
+pub use preset::SRGB;
 
 mod colorspace;
-mod decorerinfo;
-
 pub use colorspace::ColorSpace;
+pub use colorspace::{
+    CmyColorSpace, CmykColorSpace, HslColorSpace, HsluvColorSpace, HsvColorSpace, LabColorSpace,
+    LuvColorSpace, OklabColorSpace, RgbColorSpace, SyccColorSpace, UvwColorSpace, XvyccColorSpace,
+    XyzColorSpace, YcbcrColorSpace, YdbdrColorSpace, YiqColorSpace, YpbprColorSpace, YuvColorSpace,
+};
+pub use colorspace::{Differencing, Luminance, Primaries, Transfer, Whitepoint};
