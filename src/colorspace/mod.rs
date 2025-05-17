@@ -1,4 +1,4 @@
-//! Colorspace Items
+//! Colorspace Types
 
 /// A color space.
 ///
@@ -292,10 +292,10 @@ pub struct OklabColorSpace {}
 /// <https://en.wikipedia.org/wiki/RGB_color_spaces>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RgbColorSpace {
-    primaries: Primaries,
-    transfer: Transfer,
-    whitepoint: Whitepoint,
-    luminance: Luminance,
+    pub primaries: Primaries,
+    pub transfer: Transfer,
+    pub whitepoint: Whitepoint,
+    pub luminance: Luminance,
 }
 
 /// YUV color space.
@@ -303,11 +303,11 @@ pub struct RgbColorSpace {
 /// <https://en.wikipedia.org/wiki/Y%E2%80%B2UV>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct YuvColorSpace {
-    primary: Primaries,
-    whitepoint: Whitepoint,
-    transfer: Transfer,
-    luminance: Luminance,
-    differencing: Differencing,
+    pub primary: Primaries,
+    pub whitepoint: Whitepoint,
+    pub transfer: Transfer,
+    pub luminance: Luminance,
+    pub differencing: Differencing,
 }
 
 /// CMYK color space.

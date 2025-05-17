@@ -16,6 +16,3 @@ categories = ["pixel", "image", "image-processing"]
 
 [features]
 default = []
-
-[lints.rust]
-missing_docs = "deny"
