@@ -12,3 +12,6 @@ pub use colorspace::{
     XyzColorSpace, YcbcrColorSpace, YdbdrColorSpace, YiqColorSpace, YpbprColorSpace, YuvColorSpace,
 };
 pub use colorspace::{Differencing, Luminance, Primaries, Transfer, Whitepoint};
+
+mod image;
+pub use image::{AlphaType, DecoderInfo, Image, ImageFileFormat, ImageMetadata, Pixels};
